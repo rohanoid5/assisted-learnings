@@ -1,0 +1,14 @@
+com/algoforge/datastructures/advanced/AdvancedDSTest.class
+com/algoforge/datastructures/linear/DynamicArrayTest.class
+com/algoforge/datastructures/linear/LinkedListTest.class
+com/algoforge/problems/TreeProblemsTest.class
+com/algoforge/problems/DPProblemsTest.class
+com/algoforge/AlgoForgeTest.class
+com/algoforge/datastructures/trees/TreesTest.class
+com/algoforge/problems/BacktrackingProblemsTest.class
+com/algoforge/problems/HashTableProblemsTest.class
+com/algoforge/datastructures/graphs/GraphsTest.class
+com/algoforge/problems/SortingProblemsTest.class
+com/algoforge/problems/AdvancedProblemsTest.class
+com/algoforge/problems/GraphProblemsTest.class
+com/algoforge/problems/StacksQueuesProblemsTest.class

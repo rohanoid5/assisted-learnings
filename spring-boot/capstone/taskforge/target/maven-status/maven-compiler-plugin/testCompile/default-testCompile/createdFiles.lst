@@ -1,0 +1,4 @@
+com/taskforge/repository/TaskRepositoryTest.class
+com/taskforge/AuthControllerIntegrationTest.class
+com/taskforge/service/TaskServiceTest.class
+com/taskforge/controller/TaskControllerTest.class

@@ -1,0 +1,17 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/taskforge
+    username: taskforge
+    password: taskforge_dev
+    hikari:
+      maximum-pool-size: 5
+      connection-timeout: 30000
+
+logging:
+  level:
+    com.taskforge.taskforge: DEBUG
+    org.springframework.security: DEBUG

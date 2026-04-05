@@ -1,0 +1,115 @@
+// src/db/schema.prisma
+// Added in Module 08 — Databases
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum PipelineStatus {
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum StepType {
+  TRANSFORM
+  FILTER
+  AGGREGATE
+  CUSTOM
+}
+
+enum JobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum LogLevel {
+  INFO
+  WARN
+  ERROR
+}
+
+model User {
+  id           String     @id @default(uuid())
+  username     String     @unique
+  email        String     @unique
+  passwordHash String
+  role         Role       @default(USER)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  pipelines    Pipeline[]
+
+  @@map("users")
+}
+
+model Pipeline {
+  id          String         @id @default(uuid())
+  name        String
+  description String?
+  status      PipelineStatus @default(ACTIVE)
+  ownerId     String
+  owner       User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  steps       Step[]
+  jobs        Job[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@map("pipelines")
+}
+
+model Step {
+  id         String   @id @default(uuid())
+  name       String
+  type       StepType
+  config     Json     @default("{}")
+  order      Int
+  pipelineId String
+  pipeline   Pipeline @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([pipelineId, order])
+  @@map("steps")
+}
+
+model Job {
+  id          String    @id @default(uuid())
+  pipelineId  String
+  pipeline    Pipeline  @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  status      JobStatus @default(PENDING)
+  input       Json?
+  output      Json?
+  progress    Int       @default(0) // 0–100
+  error       String?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  logs        JobLog[]
+
+  @@map("jobs")
+}
+
+model JobLog {
+  id        String   @id @default(uuid())
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  level     LogLevel @default(INFO)
+  message   String
+  metadata  Json?
+  timestamp DateTime @default(now())
+
+  @@index([jobId, timestamp])
+  @@map("job_logs")
+}
