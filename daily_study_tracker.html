@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Study Tracker — EU Job Prep</title>
+<style>
+  :root {
+    --color-background-primary: #ffffff;
+    --color-background-secondary: #f5f4ef;
+    --color-background-info: #e6f1fb;
+    --color-text-primary: #1a1a18;
+    --color-text-secondary: #6b6a64;
+    --color-text-tertiary: #9c9a92;
+    --color-text-info: #185FA5;
+    --color-border-tertiary: rgba(0,0,0,0.12);
+    --color-border-secondary: rgba(0,0,0,0.22);
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-background-primary: #1e1e1c;
+      --color-background-secondary: #2a2a27;
+      --color-text-primary: #e8e6de;
+      --color-text-secondary: #9c9a92;
+      --color-text-tertiary: #6b6a64;
+      --color-border-tertiary: rgba(255,255,255,0.1);
+      --color-border-secondary: rgba(255,255,255,0.18);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); background: var(--color-background-secondary); color: var(--color-text-primary); padding: 1rem; min-height: 100vh; }
+  .container { max-width: 760px; margin: 0 auto; background: var(--color-background-primary); border-radius: var(--border-radius-lg); padding: 1.5rem; border: 0.5px solid var(--color-border-tertiary); }
+  .app-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 8px; }
+  .app-title span { font-size: 12px; color: var(--color-text-secondary); font-weight: 400; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .topbar-left { display: flex; flex-direction: column; gap: 2px; }
+  .phase-pill { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; display: inline-block; }
+  .week-label { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+  .date-label { font-size: 12px; color: var(--color-text-secondary); }
+  .topbar-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .stat-chip { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 6px 12px; text-align: center; }
+  .sc-num { font-size: 16px; font-weight: 500; color: var(--color-text-primary); }
+  .sc-cap { font-size: 10px; color: var(--color-text-tertiary); }
+
+  .nav { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .ntab { padding: 5px 14px; font-size: 12px; border: 0.5px solid var(--color-border-secondary); border-radius: 20px; cursor: pointer; color: var(--color-text-secondary); background: transparent; transition: all .15s; }
+  .ntab.active { background: var(--color-text-primary); color: var(--color-background-primary); border-color: var(--color-text-primary); }
+  .pane { display: none; }
+  .pane.active { display: block; }
+
+  .prog-wrap { margin-bottom: 1rem; }
+  .prog-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  .prog-name { font-size: 11px; color: var(--color-text-secondary); width: 80px; flex-shrink: 0; }
+  .prog-bar { flex: 1; height: 5px; background: var(--color-background-secondary); border-radius: 3px; overflow: hidden; }
+  .prog-fill { height: 100%; border-radius: 3px; transition: width .4s; }
+  .prog-pct { font-size: 11px; color: var(--color-text-tertiary); width: 32px; text-align: right; }
+
+  .day-selector { display: flex; gap: 5px; margin-bottom: 1rem; }
+  .dsel { flex: 1; padding: 7px 4px; font-size: 11px; font-weight: 500; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); cursor: pointer; color: var(--color-text-secondary); background: transparent; text-align: center; transition: all .15s; }
+  .dsel.today { border-color: var(--color-text-primary); color: var(--color-text-primary); }
+  .dsel.active { background: var(--color-text-primary); color: var(--color-background-primary); border-color: var(--color-text-primary); }
+  .dsel-name { font-size: 10px; display: block; }
+  .dsel-dot { display: block; width: 5px; height: 5px; border-radius: 50%; margin: 3px auto 0; }
+
+  .section-head { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); letter-spacing: .05em; text-transform: uppercase; margin: 1rem 0 6px; display: flex; align-items: center; gap: 6px; }
+  .section-head::after { content: ''; flex: 1; height: 0.5px; background: var(--color-border-tertiary); }
+
+  .task { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); margin-bottom: 6px; cursor: pointer; transition: border-color .15s, opacity .2s; }
+  .task:hover { border-color: var(--color-border-secondary); }
+  .task.done { opacity: .5; }
+  .task.done .task-title { text-decoration: line-through; }
+  .cb { width: 17px; height: 17px; border-radius: 4px; border: 0.5px solid var(--color-border-secondary); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .cb.checked { background: var(--color-text-primary); border-color: var(--color-text-primary); }
+  .cb.checked::after { content: ''; display: block; width: 4px; height: 7px; border: 1.5px solid var(--color-background-primary); border-top: none; border-left: none; transform: rotate(45deg) translate(-1px,-1px); }
+  .task-body { flex: 1; }
+  .task-title { font-size: 13px; color: var(--color-text-primary); line-height: 1.4; }
+  .task-sub { font-size: 11px; color: var(--color-text-secondary); margin-top: 3px; line-height: 1.4; }
+  .task-tags { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
+  .ttag { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 8px; }
+  .tt-exist  { background: #E1F5EE; color: #0F6E56; }
+  .tt-aws    { background: #E6F1FB; color: #185FA5; }
+  .tt-devops { background: #EEEDFE; color: #534AB7; }
+  .tt-ai     { background: #FAEEDA; color: #854F0B; }
+  .tt-build  { background: #FCEBEB; color: #A32D2D; }
+  .tt-job    { background: #f5f4ef; color: #6b6a64; }
+  .tt-hr     { background: #f5f4ef; color: #9c9a92; }
+
+  .week-grid { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: 6px; margin-bottom: 1rem; }
+  .wg-cell { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 8px 6px; text-align: center; cursor: pointer; }
+  .wg-cell.wg-today { border-color: var(--color-text-primary); }
+  .wg-cell.wg-active { background: var(--color-background-secondary); }
+  .wg-name { font-size: 10px; color: var(--color-text-tertiary); }
+  .wg-pct { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-top: 2px; }
+  .wg-bar { height: 3px; border-radius: 2px; margin-top: 4px; }
+
+  .milestone-row { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); margin-bottom: 7px; }
+  .ms-left { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 42px; }
+  .ms-wk { font-size: 10px; color: var(--color-text-tertiary); }
+  .ms-check { width: 22px; height: 22px; border-radius: 50%; border: 0.5px solid var(--color-border-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 11px; transition: all .15s; }
+  .ms-check.done { background: var(--color-text-primary); border-color: var(--color-text-primary); color: var(--color-background-primary); }
+  .ms-text { font-size: 12px; color: var(--color-text-primary); line-height: 1.5; flex: 1; }
+  .ms-badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 10px; margin-top: 4px; display: inline-block; }
+
+  .setup-box { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 20px; text-align: center; }
+  .setup-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
+  .setup-sub { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 16px; line-height: 1.6; }
+  .setup-row { display: flex; align-items: center; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  input[type=date] { padding: 7px 10px; font-size: 13px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); }
+  .btn-primary { padding: 8px 20px; font-size: 13px; border: 0.5px solid var(--color-text-primary); border-radius: 20px; background: var(--color-text-primary); color: var(--color-background-primary); cursor: pointer; }
+  .btn-sm { padding: 5px 14px; font-size: 11px; border: 0.5px solid var(--color-border-secondary); border-radius: 20px; background: transparent; color: var(--color-text-secondary); cursor: pointer; }
+  .btn-sm:hover { background: var(--color-background-secondary); }
+
+  .note-box { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px 14px; font-size: 12px; color: var(--color-text-secondary); line-height: 1.7; margin-top: 1rem; }
+  .note-box b { color: var(--color-text-primary); font-weight: 500; }
+  .empty-state { text-align: center; padding: 2rem; font-size: 13px; color: var(--color-text-secondary); }
+
+  .streak-row { display: flex; gap: 3px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .streak-dot { width: 14px; height: 14px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="app-title">Daily Study Tracker <span>EU Software Engineer Job Prep · 24-week plan</span></div>
+
+  <div id="setup-view" style="display:none">
+    <div class="setup-box">
+      <p class="setup-title">When did you start (or plan to start) this plan?</p>
+      <p class="setup-sub">This sets your week number and auto-loads the right topics each day.<br>You can change this anytime.</p>
+      <div class="setup-row">
+        <input type="date" id="start-date-input">
+        <button class="btn-primary" onclick="saveStartDate()">Start tracking</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="main-view" style="display:none">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="phase-pill" id="phase-pill"></span>
+        <span class="week-label" id="week-label"></span>
+        <span class="date-label" id="date-label"></span>
+      </div>
+      <div class="topbar-right">
+        <div class="stat-chip"><div class="sc-num" id="stat-today">0/0</div><div class="sc-cap">Today</div></div>
+        <div class="stat-chip"><div class="sc-num" id="stat-week">0%</div><div class="sc-cap">This week</div></div>
+        <div class="stat-chip"><div class="sc-num" id="stat-streak">0</div><div class="sc-cap">Day streak</div></div>
+        <button class="btn-sm" onclick="resetSetup()">⚙ Settings</button>
+      </div>
+    </div>
+
+    <div class="prog-wrap">
+      <div class="prog-row">
+        <span class="prog-name">Overall</span>
+        <div class="prog-bar"><div class="prog-fill" id="fill-overall" style="background:var(--color-text-primary);width:0%"></div></div>
+        <span class="prog-pct" id="pct-overall">0%</span>
+      </div>
+      <div class="prog-row">
+        <span class="prog-name">This phase</span>
+        <div class="prog-bar"><div class="prog-fill" id="fill-phase" style="background:#378ADD;width:0%"></div></div>
+        <span class="prog-pct" id="pct-phase">0%</span>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button class="ntab active" onclick="switchTab('today',this)">Today</button>
+      <button class="ntab" onclick="switchTab('week',this)">This week</button>
+      <button class="ntab" onclick="switchTab('milestones',this)">Milestones</button>
+      <button class="ntab" onclick="switchTab('heatmap',this)">Heatmap</button>
+    </div>
+
+    <div id="tab-today" class="pane active">
+      <div class="day-selector" id="day-selector"></div>
+      <div id="today-tasks"></div>
+    </div>
+
+    <div id="tab-week" class="pane">
+      <div class="week-grid" id="week-grid"></div>
+      <div id="week-detail"></div>
+    </div>
+
+    <div id="tab-milestones" class="pane">
+      <div id="milestones-list"></div>
+    </div>
+
+    <div id="tab-heatmap" class="pane">
+      <div class="section-head">Activity — last 12 weeks</div>
+      <div class="streak-row" id="heatmap"></div>
+      <div class="note-box"><b>Each square = one day.</b> Darker = more tasks completed. Keep the chain unbroken.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PHASES = [
+  { name: 'Month 1–2: AWS + DevOps', color: '#378ADD', bg: '#E6F1FB', weeks: [1,8] },
+  { name: 'Month 3–4: AI Integration', color: '#BA7517', bg: '#FAEEDA', weeks: [9,16] },
+  { name: 'Month 5–6: Job Ready', color: '#3B6D11', bg: '#EAF3DE', weeks: [17,24] },
+];
+
+const EXISTING = {
+  1: { title: 'DSA — LeetCode / problem solving', sub: 'Arrays, strings, trees, graphs rotation', tag: 'tt-exist', hr: '1 hr' },
+  2: { title: 'Spring Boot — REST, JPA, security, testing', sub: 'Deepen backend Java patterns', tag: 'tt-exist', hr: '1 hr' },
+  3: { title: 'System Design — concepts & practice problems', sub: 'Scalability, distributed systems, architecture', tag: 'tt-exist', hr: '1 hr' },
+  4: { title: 'Postgres — queries, indexing, advanced SQL', sub: 'CTEs, JSONB, explain analyse, pgvector (month 3+)', tag: 'tt-exist', hr: '1 hr' },
+  5: { title: 'Node.js — async, streams, event-driven patterns', sub: 'Queues, middleware, SSE, performance', tag: 'tt-exist', hr: '1 hr' },
+};
+
+const NEW_TOPICS = {
+  phase1: {
+    1: [
+      { w:[1,2], title:'AWS — IAM: users, groups, roles, policies', sub:'Attach role to EC2 in console', tag:'tt-aws', hr:'1 hr' },
+      { w:[3,4], title:'AWS — VPC: subnets, route tables, internet gateway', sub:'Draw the architecture as you learn', tag:'tt-aws', hr:'1 hr' },
+      { w:[5,6], title:'AWS — ALB: listeners, target groups, health checks', sub:'ALB vs NLB vs CLB differences', tag:'tt-aws', hr:'1 hr' },
+      { w:[7,8], title:'AWS exam drill — 25 practice questions', sub:'Tutorials Dojo, note every wrong answer', tag:'tt-aws', hr:'1 hr' },
+    ],
+    2: [
+      { w:[1,2], title:'AWS — EC2: instance types, AMIs, EBS, pricing', sub:'Launch a t2.micro on free tier', tag:'tt-aws', hr:'1 hr' },
+      { w:[3,4], title:'AWS — S3: storage classes, lifecycle, versioning', sub:'Pre-signed URLs, bucket policies', tag:'tt-aws', hr:'1 hr' },
+      { w:[5,6], title:'AWS — Auto Scaling Groups + launch templates', sub:'Scaling policies, cooldown periods', tag:'tt-aws', hr:'1 hr' },
+      { w:[7,8], title:'AWS exam drill — 25 practice questions', sub:'Focus on weakest topics from mock exam', tag:'tt-aws', hr:'1 hr' },
+    ],
+    3: [
+      { w:[1,2], title:'AWS — EC2: EBS volume types, snapshots, pricing', sub:'On-demand vs reserved vs spot', tag:'tt-aws', hr:'1 hr' },
+      { w:[3,4], title:'AWS — VPC: security groups vs NACLs (stateful vs stateless)', sub:'Inbound/outbound rules, default VPC', tag:'tt-aws', hr:'1 hr' },
+      { w:[5,6], title:'AWS — ECS vs EKS vs Fargate overview', sub:'When to containerise on AWS', tag:'tt-aws', hr:'1 hr' },
+      { w:[7,8], title:'AWS — full mock exam (65 Qs, timed)', sub:'Score yourself, list weak topics', tag:'tt-aws', hr:'1 hr' },
+    ],
+    4: [
+      { w:[1,2], title:'AWS — IAM continued: STS, federation, cross-account roles', sub:'Least privilege policy writing practice', tag:'tt-aws', hr:'1 hr' },
+      { w:[3,4], title:'AWS — RDS: Multi-AZ vs read replicas, Aurora basics', sub:'Maps to your Postgres knowledge', tag:'tt-aws', hr:'1 hr' },
+      { w:[5,6], title:'AWS — SQS + SNS + EventBridge', sub:'Fan-out pattern, FIFO vs standard queues', tag:'tt-aws', hr:'1 hr' },
+      { w:[7,8], title:'AWS — Lambda basics + API Gateway pattern', sub:'Serverless use cases, cold starts', tag:'tt-aws', hr:'1 hr' },
+    ],
+    5: [
+      { w:[1,2], title:'AWS — 20 IAM + EC2 practice Qs (Tutorials Dojo)', sub:'Topic mode, read all explanations', tag:'tt-aws', hr:'1 hr' },
+      { w:[3,4], title:'AWS — 30 S3 + VPC + CloudFront practice Qs', sub:'Scenario-based questions', tag:'tt-aws', hr:'1 hr' },
+      { w:[5,6], title:'AWS — 30 RDS + SQS + ALB practice Qs', sub:'Focus on Multi-AZ vs read replica traps', tag:'tt-aws', hr:'1 hr' },
+      { w:[7,8], title:'AWS — light review, 20 Qs on weakest areas', sub:'No new material — trust the preparation', tag:'tt-aws', hr:'1 hr' },
+    ],
+  },
+  phase2: {
+    1: [
+      { w:[9,10], title:'LLM APIs — chat completions, tokens, streaming', sub:'Anthropic SDK in Node.js + Spring Boot', tag:'tt-ai', hr:'1 hr' },
+      { w:[11,12], title:'Embeddings — call API, compute cosine similarity', sub:'pgvector setup: CREATE EXTENSION vector', tag:'tt-ai', hr:'1 hr' },
+      { w:[13,14], title:'Tool use — function calling with LangChain4j @Tool', sub:'Multi-tool orchestration in Spring Boot', tag:'tt-ai', hr:'1 hr' },
+      { w:[15,16], title:'Portfolio project — build session', sub:'Document Q&A API or AI Gateway', tag:'tt-build', hr:'1 hr' },
+    ],
+    2: [
+      { w:[9,10], title:'Prompt engineering — system prompts, JSON mode', sub:'Force structured output, retry on parse error', tag:'tt-ai', hr:'1 hr' },
+      { w:[11,12], title:'RAG pipeline — chunk → embed → store → retrieve', sub:'Build ingestion endpoint in Spring Boot', tag:'tt-ai', hr:'1 hr' },
+      { w:[13,14], title:'Production patterns — caching, cost tracking', sub:'Semantic response cache with pgvector', tag:'tt-ai', hr:'1 hr' },
+      { w:[15,16], title:'Portfolio project — build session', sub:'Wire up full API, handle edge cases', tag:'tt-build', hr:'1 hr' },
+    ],
+    3: [
+      { w:[9,10], title:'Multi-turn conversation state management', sub:'How to manage history in stateless LLMs', tag:'tt-ai', hr:'1 hr' },
+      { w:[11,12], title:'Full RAG Q&A — retrieve chunks → inject → generate', sub:'Add re-ranking for quality improvement', tag:'tt-ai', hr:'1 hr' },
+      { w:[13,14], title:'Observability — log every LLM call to Postgres', sub:'Token usage, latency, cost per request', tag:'tt-ai', hr:'1 hr' },
+      { w:[15,16], title:'Portfolio project — deploy to AWS', sub:'EC2 + RDS, HTTPS, custom domain', tag:'tt-build', hr:'1 hr' },
+    ],
+    4: [
+      { w:[9,10], title:'Cost awareness — token pricing, caching, haiku vs sonnet', sub:'Set $20/month budget alert on Anthropic', tag:'tt-ai', hr:'1 hr' },
+      { w:[11,12], title:'Document chunking strategies — fixed, sentence, paragraph', sub:'Overlap between chunks, optimal chunk size', tag:'tt-ai', hr:'1 hr' },
+      { w:[13,14], title:'Safety patterns — prompt injection, input validation', sub:'Guardrails: classify input before LLM call', tag:'tt-ai', hr:'1 hr' },
+      { w:[15,16], title:'Portfolio project — README + blog post', sub:'Architecture diagram, Loom demo video', tag:'tt-build', hr:'1 hr' },
+    ],
+    5: [
+      { w:[9,10], title:'Few-shot prompting + chain-of-thought patterns', sub:'Build text classification endpoint', tag:'tt-ai', hr:'1 hr' },
+      { w:[11,12], title:'pgvector nearest-neighbour queries + HNSW index', sub:'Query performance, index types', tag:'tt-ai', hr:'1 hr' },
+      { w:[13,14], title:'Fallback strategies — graceful degradation', sub:'If LLM down, return best pgvector chunk', tag:'tt-ai', hr:'1 hr' },
+      { w:[15,16], title:'Portfolio project — open source on GitHub', sub:'Clean commit history, good README', tag:'tt-build', hr:'1 hr' },
+    ],
+  },
+  phase3: {
+    1: [
+      { w:[17,20], title:'DSA — LeetCode medium (1 problem, timed 30 min)', sub:'Arrays, trees, graphs, DP rotation', tag:'tt-exist', hr:'1 hr' },
+      { w:[21,24], title:'DSA — LeetCode medium (1 problem, timed 25 min)', sub:'Increasing speed target as interviews near', tag:'tt-exist', hr:'1 hr' },
+    ],
+    2: [
+      { w:[17,20], title:'System design problem — draw + explain aloud', sub:'URL shortener, chat app, notification service', tag:'tt-exist', hr:'1 hr' },
+      { w:[21,24], title:'System design problem — full mock format', sub:'45-min timed, record yourself', tag:'tt-exist', hr:'1 hr' },
+    ],
+    3: [
+      { w:[17,20], title:'Behavioural prep — write 2 STAR answers', sub:'Leadership, failure, cross-team, impact', tag:'tt-job', hr:'1 hr' },
+      { w:[21,24], title:'AWS interview Qs — Lambda, SQS, ECS, VPC', sub:'Review what EU jobs ask about cloud', tag:'tt-aws', hr:'1 hr' },
+    ],
+    4: [
+      { w:[17,20], title:'DSA — LeetCode medium (1 problem)', sub:'Postgres / Node.js rotation continues', tag:'tt-exist', hr:'1 hr' },
+      { w:[21,24], title:'AI/LLM interview Qs — RAG, vectors, tool use', sub:'Cost tradeoffs, architecture decisions', tag:'tt-ai', hr:'1 hr' },
+    ],
+    5: [
+      { w:[17,20], title:'System design problem — from Exponent or systemdesign.one', sub:'Use STAR, draw diagram, note tradeoffs', tag:'tt-exist', hr:'1 hr' },
+      { w:[21,24], title:'Mock interview on Pramp / Interviewing.io', sub:'Full session, get written feedback', tag:'tt-job', hr:'1 hr' },
+    ],
+  },
+};
+
+const WEEKEND_TASKS = {
+  phase1: {
+    sat: [
+      { w:[1,2], title:'Lab: Deploy Spring Boot app to EC2 manually. SSH in, run it, access via public IP.', tag:'tt-aws', hr:'2.5 hrs' },
+      { w:[3,4], title:'Lab: Build VPC — public subnet (bastion), private subnet (app + DB). Put your app in it.', tag:'tt-aws', hr:'2.5 hrs' },
+      { w:[5,6], title:'Lab: Add ALB in front of EC2 app. Set up Auto Scaling group (min 1, max 3).', tag:'tt-aws', hr:'2.5 hrs' },
+      { w:[7,8], title:'AWS mock exam — 65 Qs timed (130 min). Score and list weak topics.', tag:'tt-aws', hr:'2.5 hrs' },
+    ],
+    sun: [
+      { w:[1,2], title:"Lab: Host static site on S3 + CloudFront. Add custom domain via Route 53.", tag:'tt-aws', hr:'2 hrs' },
+      { w:[1,2], title:"Review week's DSA + SysDesign notes. Plan next week.", tag:'tt-exist', hr:'0.5 hr' },
+      { w:[3,4], title:'Lab: Add RDS Postgres to your VPC. Connect Spring Boot app via private subnet.', tag:'tt-aws', hr:'2 hrs' },
+      { w:[3,4], title:'Review + plan next week.', tag:'tt-exist', hr:'0.5 hr' },
+      { w:[5,6], title:'Lab: GitHub Actions CI/CD — build → test → deploy to EC2. Full pipeline.', tag:'tt-devops', hr:'2 hrs' },
+      { w:[5,6], title:'Push project to GitHub, add architecture README.', tag:'tt-build', hr:'0.5 hr' },
+      { w:[7,8], title:'Second mock exam (65 Qs). Score ≥75%? Book real exam. Below? Extend drills 1 week.', tag:'tt-aws', hr:'2 hrs' },
+      { w:[7,8], title:'Book AWS SAA-C03 exam on Pearson VUE (online proctored).', tag:'tt-build', hr:'0.5 hr' },
+    ],
+  },
+  phase2: {
+    sat: [
+      { w:[9,10], title:'Build: Chatbot REST API in Spring Boot — POST /chat with session history, LLM call, streaming SSE.', tag:'tt-ai', hr:'2.5 hrs' },
+      { w:[11,12], title:'Build: Semantic search endpoint — POST /search → embed → pgvector query → return top 5 chunks.', tag:'tt-ai', hr:'2.5 hrs' },
+      { w:[13,14], title:'Build: Extend RAG API with tool use — "summarise_document" and "list_documents" tools via LangChain4j.', tag:'tt-ai', hr:'2.5 hrs' },
+      { w:[15,16], title:'Deploy portfolio project to AWS EC2 + RDS. Set up HTTPS via ACM. Custom domain.', tag:'tt-build', hr:'2.5 hrs' },
+    ],
+    sun: [
+      { w:[9,10], title:'Add classification layer to chatbot: categorise user message, log to Postgres with token usage.', tag:'tt-ai', hr:'2 hrs' },
+      { w:[9,10], title:"Review week's notes, plan next week.", tag:'tt-exist', hr:'0.5 hr' },
+      { w:[11,12], title:'Build full RAG Q&A: retrieve chunks → inject into prompt → LLM answer. Deploy to EC2.', tag:'tt-ai', hr:'2 hrs' },
+      { w:[11,12], title:'Write GitHub README for the RAG API. Push all code.', tag:'tt-build', hr:'0.5 hr' },
+      { w:[13,14], title:'Production-harden RAG API: rate limiting, response caching, metrics, input sanitisation.', tag:'tt-ai', hr:'2 hrs' },
+      { w:[13,14], title:'Update README with architecture diagram and cost estimate.', tag:'tt-build', hr:'0.5 hr' },
+      { w:[15,16], title:'Write Medium blog post about your AI project — architecture decisions, lessons learned.', tag:'tt-build', hr:'2 hrs' },
+      { w:[15,16], title:'Share blog post on LinkedIn. Open source GitHub repo. Record Loom demo.', tag:'tt-job', hr:'0.5 hr' },
+    ],
+  },
+  phase3: {
+    sat: [
+      { w:[17,20], title:'Apply to 5–8 EU roles on LinkedIn, WeAreDevelopers, Relocate.me. Customise CV per role.', tag:'tt-job', hr:'2 hrs' },
+      { w:[17,20], title:'LinkedIn outreach to 3 EU-based recruiters. Connect + send short personalised note.', tag:'tt-job', hr:'0.5 hr' },
+      { w:[21,24], title:'Apply to 5–8 EU roles. Follow up on previous applications (1 week = send a short note).', tag:'tt-job', hr:'2 hrs' },
+      { w:[21,24], title:'Research visa requirements for your top 2 countries. Document checklist.', tag:'tt-job', hr:'0.5 hr' },
+    ],
+    sun: [
+      { w:[17,20], title:'Mock interview on Pramp or Interviewing.io — full DSA + system design session.', tag:'tt-job', hr:'1.5 hrs' },
+      { w:[17,20], title:"Review mock feedback. Update weak areas list. Plan next week focus.", tag:'tt-exist', hr:'1 hr' },
+      { w:[21,24], title:'Mock interview — full loop (DSA + system design + behavioural).', tag:'tt-job', hr:'2 hrs' },
+      { w:[21,24], title:'Apostille documents check. Connect with Indian engineers who relocated to your target country.', tag:'tt-job', hr:'0.5 hr' },
+    ],
+  },
+};
+
+const MILESTONES_DATA = [
+  { week: 2,  text: 'AWS Cloud Practitioner level knowledge solid. EC2, IAM, S3 fundamentals done.', badge: 'foundation', bc: '#E6F1FB', btc: '#185FA5' },
+  { week: 4,  text: 'VPC, RDS, SQS, SNS covered. First lab app deployed on EC2 inside a proper VPC.', badge: 'cloud deployed', bc: '#EEEDFE', btc: '#534AB7' },
+  { week: 6,  text: 'AWS SAA-C03 exam taken and passed (720+/1000). Docker + K8s basics complete.', badge: 'cert earned', bc: '#EAF3DE', btc: '#3B6D11' },
+  { week: 8,  text: 'Full CI/CD pipeline live. Spring Boot/Node app deployed on AWS with GitHub Actions.', badge: 'DevOps done', bc: '#FAEEDA', btc: '#854F0B' },
+  { week: 10, text: 'LLM API integration working in both Java and Node.js. Chatbot API live on EC2.', badge: 'AI started', bc: '#FAEEDA', btc: '#854F0B' },
+  { week: 12, text: 'pgvector set up on Postgres. Full RAG pipeline: ingest → embed → retrieve → answer.', badge: 'RAG working', bc: '#E6F1FB', btc: '#185FA5' },
+  { week: 14, text: 'Tool use + LangChain4j integrated. Production patterns: caching, metrics, fallback.', badge: 'production ready', bc: '#EEEDFE', btc: '#534AB7' },
+  { week: 16, text: 'Portfolio project shipped: live URL, GitHub, README, blog post, Loom demo.', badge: 'portfolio live', bc: '#EAF3DE', btc: '#3B6D11' },
+  { week: 18, text: 'CV and LinkedIn optimised. First 10 EU applications sent. LeetCode streak maintained.', badge: 'applying', bc: '#FAEEDA', btc: '#854F0B' },
+  { week: 20, text: '20+ applications sent. First interview responses. Documents apostilled.', badge: 'interviews', bc: '#E6F1FB', btc: '#185FA5' },
+  { week: 22, text: 'Active interview loop. Mock interviews done. Visa paperwork in progress.', badge: 'deep loop', bc: '#EEEDFE', btc: '#534AB7' },
+  { week: 24, text: 'Offer stage or final rounds. Relocation plan ready. Job-ready.', badge: 'job ready', bc: '#EAF3DE', btc: '#3B6D11' },
+];
+
+// ── STATE (localStorage for standalone file) ───────────────────────────────
+let startDate = null;
+let taskState = {};
+let milestoneState = {};
+let selectedDay = null;
+
+function loadState() {
+  try {
+    const sd = localStorage.getItem('eu_tracker_start');
+    if (sd) startDate = new Date(sd);
+    const ts = localStorage.getItem('eu_tracker_tasks');
+    if (ts) taskState = JSON.parse(ts);
+    const ms = localStorage.getItem('eu_tracker_milestones');
+    if (ms) milestoneState = JSON.parse(ms);
+  } catch(e) {}
+}
+function saveTaskState() {
+  try { localStorage.setItem('eu_tracker_tasks', JSON.stringify(taskState)); } catch(e) {}
+}
+function saveMilestoneState() {
+  try { localStorage.setItem('eu_tracker_milestones', JSON.stringify(milestoneState)); } catch(e) {}
+}
+function saveStartDate() {
+  const inp = document.getElementById('start-date-input');
+  if (!inp.value) return;
+  startDate = new Date(inp.value);
+  try { localStorage.setItem('eu_tracker_start', startDate.toISOString()); } catch(e) {}
+  init();
+}
+function resetSetup() {
+  startDate = null;
+  localStorage.removeItem('eu_tracker_start');
+  document.getElementById('main-view').style.display = 'none';
+  document.getElementById('setup-view').style.display = 'block';
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────────
+function today() { const d = new Date(); d.setHours(0,0,0,0); return d; }
+function weekNum(date) { return Math.max(1, Math.min(24, Math.floor((date - startDate) / 86400000 / 7) + 1)); }
+function getPhase(wk) { return wk <= 8 ? 0 : wk <= 16 ? 1 : 2; }
+function getPhaseKey(wk) { return ['phase1','phase2','phase3'][getPhase(wk)]; }
+function dayKey(date) { return date.toISOString().slice(0,10); }
+function taskKey(date, idx) { return dayKey(date) + '_' + idx; }
+
+function getWeekDays(wk) {
+  const monOffset = (wk - 1) * 7;
+  const mon = new Date(startDate.getTime() + monOffset * 86400000);
+  const dow = mon.getDay();
+  const diff = (dow === 0 ? -6 : 1 - dow);
+  mon.setDate(mon.getDate() + diff);
+  const days = [];
+  for (let i = 0; i < 7; i++) { const d = new Date(mon); d.setDate(mon.getDate() + i); days.push(d); }
+  return days;
+}
+
+function getTasksForDate(date) {
+  const dow = date.getDay();
+  const wk = weekNum(date);
+  const phaseKey = getPhaseKey(wk);
+  const tasks = [];
+  if (dow === 0) {
+    const ws = WEEKEND_TASKS[phaseKey];
+    if (ws) ws.sun.filter(t => wk >= t.w[0] && wk <= t.w[1]).forEach(t => tasks.push({...t, section:'Weekend'}));
+  } else if (dow === 6) {
+    const ws = WEEKEND_TASKS[phaseKey];
+    if (ws) { const e = ws.sat.find(t => wk >= t.w[0] && wk <= t.w[1]); if (e) tasks.push({...e, section:'Weekend deep work'}); }
+  } else {
+    const ex = EXISTING[dow];
+    if (ex) tasks.push({...ex, section:'Hour 1 — existing'});
+    const nt = NEW_TOPICS[phaseKey];
+    if (nt && nt[dow]) { const e = nt[dow].find(t => wk >= t.w[0] && wk <= t.w[1]); if (e) tasks.push({...e, section:'Hour 2 — new topic'}); }
+  }
+  return tasks;
+}
+
+function getDayCompletion(date) {
+  const tasks = getTasksForDate(date);
+  if (!tasks.length) return null;
+  const done = tasks.filter((_,i) => taskState[taskKey(date,i)]).length;
+  return { done, total: tasks.length, pct: Math.round(done/tasks.length*100) };
+}
+
+function getWeekCompletion(wk) {
+  let done = 0, total = 0;
+  getWeekDays(wk).forEach(d => { const c = getDayCompletion(d); if (c) { done += c.done; total += c.total; } });
+  return total ? Math.round(done/total*100) : 0;
+}
+
+function getStreak() {
+  let streak = 0, d = new Date(today());
+  while (true) {
+    const c = getDayCompletion(d);
+    if (!c || c.done === 0) break;
+    streak++; d.setDate(d.getDate() - 1);
+    if (d < startDate) break;
+  }
+  return streak;
+}
+
+function getOverallCompletion() {
+  const wk = weekNum(today()); let done = 0, total = 0;
+  for (let w = 1; w <= wk; w++) getWeekDays(w).forEach(d => { if (d <= today()) { const c = getDayCompletion(d); if (c) { done += c.done; total += c.total; } } });
+  return total ? Math.round(done/total*100) : 0;
+}
+
+function getPhaseCompletion() {
+  const wk = weekNum(today()); const phStart = [1,9,17][getPhase(wk)]; let done = 0, total = 0;
+  for (let w = phStart; w <= wk; w++) getWeekDays(w).forEach(d => { if (d <= today()) { const c = getDayCompletion(d); if (c) { done += c.done; total += c.total; } } });
+  return total ? Math.round(done/total*100) : 0;
+}
+
+// ── RENDER ─────────────────────────────────────────────────────────────────
+function renderTopBar() {
+  const wk = weekNum(today()), ph = getPhase(wk), phase = PHASES[ph];
+  const pill = document.getElementById('phase-pill');
+  pill.textContent = phase.name; pill.style.background = phase.bg; pill.style.color = phase.color;
+  document.getElementById('week-label').textContent = 'Week ' + wk + ' of 24';
+  document.getElementById('date-label').textContent = today().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  const tc = getDayCompletion(today());
+  document.getElementById('stat-today').textContent = tc ? (tc.done + '/' + tc.total) : '—';
+  document.getElementById('stat-week').textContent = getWeekCompletion(wk) + '%';
+  document.getElementById('stat-streak').textContent = getStreak();
+  const ov = getOverallCompletion();
+  document.getElementById('fill-overall').style.width = ov + '%';
+  document.getElementById('pct-overall').textContent = ov + '%';
+  const pv = getPhaseCompletion();
+  document.getElementById('fill-phase').style.width = pv + '%';
+  document.getElementById('fill-phase').style.background = phase.color;
+  document.getElementById('pct-phase').textContent = pv + '%';
+}
+
+function renderDaySelector() {
+  const wk = weekNum(today()), days = getWeekDays(wk), names = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const container = document.getElementById('day-selector'); container.innerHTML = '';
+  days.forEach(d => {
+    const isToday = d.getTime() === today().getTime(), isPast = d < today(), comp = getDayCompletion(d);
+    const btn = document.createElement('button');
+    btn.className = 'dsel' + (isToday ? ' today' : '');
+    btn.innerHTML = `<span class="dsel-name">${names[d.getDay()]}</span><span style="font-size:12px;font-weight:500;color:var(--color-text-primary)">${d.getDate()}</span><span class="dsel-dot" style="background:${comp && comp.done > 0 ? '#1D9E75' : (isPast ? '#E24B4A' : 'transparent')}"></span>`;
+    btn.onclick = () => { document.querySelectorAll('.dsel').forEach(b => b.classList.remove('active')); btn.classList.add('active'); selectedDay = d; renderTodayTasks(d); };
+    if (isToday) { btn.classList.add('active'); selectedDay = d; }
+    container.appendChild(btn);
+  });
+}
+
+function renderTodayTasks(date) {
+  const tasks = getTasksForDate(date), container = document.getElementById('today-tasks'); container.innerHTML = '';
+  if (!tasks.length) { container.innerHTML = '<div class="empty-state">No tasks scheduled for this day.<br>Rest and recover!</div>'; return; }
+  let lastSection = null;
+  tasks.forEach((task, i) => {
+    if (task.section !== lastSection) { const sh = document.createElement('div'); sh.className = 'section-head'; sh.textContent = task.section; container.appendChild(sh); lastSection = task.section; }
+    const key = taskKey(date, i), done = !!taskState[key], div = document.createElement('div');
+    div.className = 'task' + (done ? ' done' : '');
+    div.onclick = () => { taskState[key] = !taskState[key]; saveTaskState(); renderTodayTasks(date); renderTopBar(); };
+    div.innerHTML = `<div class="cb ${done ? 'checked' : ''}"></div><div class="task-body"><div class="task-title">${task.title}</div>${task.sub ? `<div class="task-sub">${task.sub}</div>` : ''}<div class="task-tags"><span class="ttag ${task.tag}">${task.tag.replace('tt-','').toUpperCase()}</span><span class="ttag tt-hr">${task.hr}</span></div></div>`;
+    container.appendChild(div);
+  });
+  const dow = date.getDay();
+  if (dow === 0 || dow === 6) { const nb = document.createElement('div'); nb.className = 'note-box'; nb.innerHTML = '<b>Weekend deep work.</b> Focus on understanding and building, not just completing. These sessions are where skills actually form.'; container.appendChild(nb); }
+}
+
+function renderWeekTab() {
+  const wk = weekNum(today()), days = getWeekDays(wk), names = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const grid = document.getElementById('week-grid'); grid.innerHTML = '';
+  const phaseColor = PHASES[getPhase(wk)].color;
+  days.forEach(d => {
+    const isToday = d.getTime() === today().getTime(), comp = getDayCompletion(d), pct = comp ? comp.pct : 0;
+    const cell = document.createElement('div'); cell.className = 'wg-cell' + (isToday ? ' wg-today' : '');
+    cell.innerHTML = `<div class="wg-name">${names[d.getDay()]}</div><div class="wg-pct">${comp ? pct+'%' : '—'}</div><div class="wg-bar" style="background:${pct===100 ? '#1D9E75' : pct>0 ? phaseColor : 'var(--color-border-tertiary)'};width:${pct}%"></div>`;
+    cell.onclick = () => { document.querySelectorAll('.wg-cell').forEach(c => c.classList.remove('wg-active')); cell.classList.add('wg-active'); renderWeekDetail(d); };
+    grid.appendChild(cell);
+  });
+  renderWeekDetail(today());
+}
+
+function renderWeekDetail(date) {
+  const tasks = getTasksForDate(date), names = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const container = document.getElementById('week-detail'); container.innerHTML = '';
+  const sh = document.createElement('div'); sh.className = 'section-head'; sh.textContent = names[date.getDay()]; container.appendChild(sh);
+  if (!tasks.length) { container.innerHTML += '<div class="empty-state" style="padding:1rem">Rest day</div>'; return; }
+  tasks.forEach((task, i) => {
+    const key = taskKey(date, i), done = !!taskState[key], div = document.createElement('div');
+    div.className = 'task' + (done ? ' done' : '');
+    div.onclick = () => { taskState[key] = !taskState[key]; saveTaskState(); renderWeekDetail(date); renderWeekTab(); renderTopBar(); };
+    div.innerHTML = `<div class="cb ${done ? 'checked' : ''}"></div><div class="task-body"><div class="task-title">${task.title}</div>${task.sub ? `<div class="task-sub">${task.sub}</div>` : ''}<div class="task-tags"><span class="ttag ${task.tag}">${task.tag.replace('tt-','').toUpperCase()}</span><span class="ttag tt-hr">${task.hr}</span></div></div>`;
+    container.appendChild(div);
+  });
+}
+
+function renderMilestones() {
+  const wk = weekNum(today()), container = document.getElementById('milestones-list'); container.innerHTML = '';
+  MILESTONES_DATA.forEach((m, i) => {
+    const done = !!milestoneState['ms_' + i], passed = wk >= m.week, row = document.createElement('div');
+    row.className = 'milestone-row';
+    row.innerHTML = `<div class="ms-left"><span class="ms-wk">Wk ${m.week}</span><div class="ms-check ${done ? 'done' : ''}" onclick="toggleMilestone(${i}, this)">✓</div></div><div style="flex:1"><div class="ms-text" style="${done ? 'text-decoration:line-through;opacity:.5' : ''}">${m.text}</div><span class="ms-badge" style="background:${m.bc};color:${m.btc}">${m.badge}</span>${!done && passed ? '<span class="ms-badge" style="background:#FCEBEB;color:#A32D2D;margin-left:5px">due now</span>' : ''}</div>`;
+    container.appendChild(row);
+  });
+}
+
+function toggleMilestone(i) { milestoneState['ms_' + i] = !milestoneState['ms_' + i]; saveMilestoneState(); renderMilestones(); }
+
+function renderHeatmap() {
+  const container = document.getElementById('heatmap'); container.innerHTML = '';
+  const end = new Date(today()), start = new Date(end); start.setDate(start.getDate() - 83);
+  const d = new Date(start);
+  while (d <= end) {
+    const comp = getDayCompletion(new Date(d)), pct = comp ? comp.pct : 0, dot = document.createElement('div');
+    dot.className = 'streak-dot';
+    dot.style.background = pct === 0 ? 'var(--color-border-tertiary)' : `rgba(29,158,117,${pct===100?1:0.5})`;
+    dot.title = d.toDateString() + ': ' + (comp ? comp.done + '/' + comp.total + ' tasks' : 'no tasks');
+    container.appendChild(dot); d.setDate(d.getDate() + 1);
+  }
+}
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.ntab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active'); document.getElementById('tab-' + id).classList.add('active');
+  if (id === 'week') renderWeekTab();
+  if (id === 'milestones') renderMilestones();
+  if (id === 'heatmap') renderHeatmap();
+}
+
+function init() {
+  loadState();
+  if (!startDate) {
+    document.getElementById('setup-view').style.display = 'block';
+    document.getElementById('start-date-input').value = new Date().toISOString().slice(0,10);
+    return;
+  }
+  document.getElementById('setup-view').style.display = 'none';
+  document.getElementById('main-view').style.display = 'block';
+  selectedDay = today();
+  renderTopBar(); renderDaySelector(); renderTodayTasks(today());
+}
+
+init();
+</script>
+</body>
+</html>
