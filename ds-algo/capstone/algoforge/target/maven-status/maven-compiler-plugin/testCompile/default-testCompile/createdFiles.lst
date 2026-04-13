@@ -5,6 +5,7 @@ com/algoforge/problems/TreeProblemsTest.class
 com/algoforge/problems/DPProblemsTest.class
 com/algoforge/AlgoForgeTest.class
 com/algoforge/datastructures/trees/TreesTest.class
+com/algoforge/problems/PatternProblemsTest.class
 com/algoforge/problems/BacktrackingProblemsTest.class
 com/algoforge/problems/HashTableProblemsTest.class
 com/algoforge/datastructures/graphs/GraphsTest.class

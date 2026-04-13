@@ -1,0 +1,4 @@
+app:
+  jwt:
+    secret: test-secret-key-this-is-at-least-256-bits-long-for-hs256-algorithm
+    expiration-ms: 3600000   # 1 hour for tests

@@ -1,8 +1,8 @@
 spring:
-  config:
-    activate:
-      on-profile: dev
-
+  devtools:
+    restart:
+      enabled: true
+  
   datasource:
     url: jdbc:postgresql://localhost:5432/taskforge
     username: taskforge
@@ -10,6 +10,11 @@ spring:
     hikari:
       maximum-pool-size: 5
       connection-timeout: 30000
+
+app:
+  jwt:
+    secret: dev-secret-key-this-is-at-least-256-bits-long-for-hs256-algorithm
+    expiration-ms: 86400000  # 24 hours
 
 logging:
   level:

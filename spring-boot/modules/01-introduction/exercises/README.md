@@ -335,11 +335,11 @@ DEBUG ← HealthService.getUptimeSeconds() (0ms)
 ## Module 1 Capstone Checkpoint
 
 By now TaskForge should have:
-- [ ] Spring Boot app starting cleanly
-- [ ] Three config profiles: dev, prod, test
-- [ ] `AppProperties` with type-safe JWT config binding
-- [ ] `HealthController` → `HealthService` wired via constructor injection
-- [ ] `ServiceLoggingAspect` logging all service calls
-- [ ] AOP starter in `pom.xml`
+- [x] Spring Boot app starting cleanly
+- [x] Three config profiles: dev, prod, test
+- [x] `AppProperties` with type-safe JWT config binding
+- [x] `HealthController` → `HealthService` wired via constructor injection
+- [x] `ServiceLoggingAspect` logging all service calls
+- [x] AOP starter in `pom.xml`
 
 If all items are checked, proceed to [Module 2 — Spring Boot Core](../../02-spring-boot-core/README.md).

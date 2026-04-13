@@ -4,8 +4,20 @@ server:
 spring:
   application:
     name: taskforge
+  profiles:
+    active: dev    # Default active profile
 
-app:
-  jwt:
-    secret: dev-secret-key-minimum-256-bits-long
-    expiration-ms: 86400000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: TaskForge
+    description: Project Management API
+    version: 1.0.0
