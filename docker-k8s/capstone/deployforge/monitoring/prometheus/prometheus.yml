@@ -1,0 +1,44 @@
+# DeployForge — Prometheus Configuration
+# Introduced in Module 08 (Observability: Prometheus + Grafana)
+#
+# This config is for local/docker-compose usage. In Kubernetes, the
+# Prometheus Operator manages scrape configs via ServiceMonitors.
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+
+# ── Scrape Configs ──────────────────────────────────────────────
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # DeployForge API Gateway
+  - job_name: "deployforge-api"
+    metrics_path: /metrics
+    scrape_interval: 10s
+    static_configs:
+      - targets: ["api:3000"]
+        labels:
+          service: api
+          environment: dev
+
+  # DeployForge Worker Service
+  # TODO Module 08: Worker needs an HTTP /metrics endpoint on a separate port
+  - job_name: "deployforge-worker"
+    metrics_path: /metrics
+    scrape_interval: 30s
+    static_configs:
+      - targets: ["worker:9090"]
+        labels:
+          service: worker
+          environment: dev
+
+  # Node Exporter (host metrics)
+  # TODO Module 08: Add node-exporter container to docker-compose
+  # - job_name: "node-exporter"
+  #   static_configs:
+  #     - targets: ["node-exporter:9100"]

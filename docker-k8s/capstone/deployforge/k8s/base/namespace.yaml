@@ -1,0 +1,9 @@
+# DeployForge — Kubernetes Namespace
+# Introduced in Module 04
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: deployforge
+  labels:
+    app.kubernetes.io/part-of: deployforge

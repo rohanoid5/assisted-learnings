@@ -1,0 +1,21 @@
+# DeployForge — API Gateway Service
+# Introduced in Module 04 (Kubernetes Services and networking)
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  namespace: deployforge
+  labels:
+    app.kubernetes.io/name: api
+    app.kubernetes.io/component: gateway
+    app.kubernetes.io/part-of: deployforge
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: api
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP

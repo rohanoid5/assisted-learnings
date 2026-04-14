@@ -1,0 +1,48 @@
+# DeployForge — Dev Overlay
+# Introduced in Module 04/05 (Kustomize overlays per environment)
+#
+# Dev environment: single replica, lower resource limits, debug logging.
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+# Override namespace (same in dev, but explicit)
+namespace: deployforge
+
+# Dev-specific patches
+patches:
+  # Scale down to 1 replica for local development
+  - target:
+      kind: Deployment
+      name: api
+    patch: |
+      - op: replace
+        path: /spec/replicas
+        value: 1
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 50m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 64Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 200m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 128Mi
+
+  # Enable debug logging in dev
+  - target:
+      kind: Deployment
+      name: api
+    patch: |
+      - op: replace
+        path: /spec/template/spec/containers/0/env/2/value
+        value: debug
+
+commonLabels:
+  app.kubernetes.io/env: dev

@@ -1,0 +1,32 @@
+# DeployForge — Helm Chart
+# Introduced in Module 06 (Helm charts and templating)
+
+apiVersion: v2
+name: deployforge
+description: A Helm chart for the DeployForge capstone — microservices app for learning Docker, K8s, and SRE practices
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+
+keywords:
+  - deployforge
+  - docker-k8s
+  - capstone
+  - microservices
+  - kubernetes
+
+home: https://github.com/learnings/docker-k8s
+
+maintainers:
+  - name: DeployForge Learner
+
+# TODO Module 06: Add sub-chart dependencies
+# dependencies:
+#   - name: postgresql
+#     version: "~13.0"
+#     repository: https://charts.bitnami.com/bitnami
+#     condition: postgresql.enabled
+#   - name: redis
+#     version: "~18.0"
+#     repository: https://charts.bitnami.com/bitnami
+#     condition: redis.enabled

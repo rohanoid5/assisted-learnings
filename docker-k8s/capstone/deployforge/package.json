@@ -1,0 +1,37 @@
+{
+  "name": "deployforge",
+  "version": "0.1.0",
+  "description": "DeployForge — capstone project for the docker-k8s learning track",
+  "type": "module",
+  "main": "dist/api/index.js",
+  "scripts": {
+    "dev": "tsx watch src/api/index.ts",
+    "dev:worker": "tsx watch src/services/worker.ts",
+    "build": "tsc",
+    "start": "node dist/api/index.js",
+    "start:worker": "node dist/services/worker.js",
+    "lint": "eslint src/",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "bullmq": "^5.0.0",
+    "express": "^4.18.0",
+    "ioredis": "^5.3.0",
+    "pg": "^8.12.0",
+    "prom-client": "^15.1.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.0",
+    "@types/node": "^20.0.0",
+    "@types/pg": "^8.11.0",
+    "eslint": "^8.56.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

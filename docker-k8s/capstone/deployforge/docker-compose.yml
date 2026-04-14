@@ -1,0 +1,112 @@
+# DeployForge — Local Development Stack
+# Introduced in Module 03 (Docker Compose for multi-service development)
+#
+# Usage:
+#   docker compose up -d
+#   docker compose logs -f api
+#   docker compose down -v
+
+services:
+  # ── API Gateway ───────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    ports:
+      - "${API_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: development
+      PORT: "3000"
+      DATABASE_URL: postgresql://deployforge:password@postgres:5432/deployforge_dev
+      REDIS_URL: redis://redis:6379
+      LOG_LEVEL: debug
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - deployforge
+
+  # ── Worker Service ────────────────────────────────────────────
+  worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.worker
+    environment:
+      NODE_ENV: development
+      REDIS_URL: redis://redis:6379
+      DATABASE_URL: postgresql://deployforge:password@postgres:5432/deployforge_dev
+      WORKER_CONCURRENCY: "3"
+      LOG_LEVEL: debug
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - deployforge
+
+  # ── PostgreSQL ────────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: deployforge
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: deployforge_dev
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U deployforge -d deployforge_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - deployforge
+
+  # ── Redis ─────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - deployforge
+
+  # ── Nginx Reverse Proxy ──────────────────────────────────────
+  # TODO Module 05: Add nginx.conf for routing and rate-limiting
+  nginx:
+    image: nginx:1.25-alpine
+    ports:
+      - "${NGINX_PORT:-8080}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - deployforge
+
+volumes:
+  pgdata:
+    name: deployforge_pgdata
+  redisdata:
+    name: deployforge_redisdata
+
+networks:
+  deployforge:
+    name: deployforge_net
+    driver: bridge

@@ -1,0 +1,23 @@
+# DeployForge — Kustomize Base
+# Introduced in Module 04 (Kubernetes fundamentals)
+#
+# All raw manifests live here. Overlays (dev, staging, prod) patch these
+# with environment-specific values.
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: deployforge
+
+resources:
+  - namespace.yaml
+  - api-deployment.yaml
+  - api-service.yaml
+  # TODO Module 04: Add worker-deployment.yaml
+  # TODO Module 05: Add configmap.yaml
+  # TODO Module 05: Add secret.yaml (or ExternalSecret in Module 07)
+  # TODO Module 05: Add ingress.yaml
+
+commonLabels:
+  app.kubernetes.io/part-of: deployforge
+  app.kubernetes.io/managed-by: kustomize

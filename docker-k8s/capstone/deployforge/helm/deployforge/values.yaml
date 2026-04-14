@@ -1,0 +1,102 @@
+# DeployForge — Default Helm Values
+# Introduced in Module 06 (Helm charts and templating)
+#
+# Override per environment:
+#   helm install deployforge ./helm/deployforge -f values-dev.yaml
+
+# ── API Gateway ─────────────────────────────────────────────────
+api:
+  replicaCount: 2
+
+  image:
+    repository: deployforge/api
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  env:
+    NODE_ENV: production
+    PORT: "3000"
+    LOG_LEVEL: info
+
+  # Probes
+  livenessProbe:
+    path: /health
+    initialDelaySeconds: 10
+    periodSeconds: 15
+  readinessProbe:
+    path: /ready
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+# ── Worker Service ──────────────────────────────────────────────
+worker:
+  replicaCount: 1
+
+  image:
+    repository: deployforge/worker
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 128Mi
+
+  env:
+    WORKER_CONCURRENCY: "5"
+
+# ── Ingress ─────────────────────────────────────────────────────
+# TODO Module 05: Enable and configure Ingress
+ingress:
+  enabled: false
+  className: nginx
+  annotations: {}
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: deployforge.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+  #  - secretName: deployforge-tls
+  #    hosts:
+  #      - deployforge.local
+
+# ── Monitoring ──────────────────────────────────────────────────
+# TODO Module 08: Enable Prometheus ServiceMonitor
+monitoring:
+  enabled: false
+  serviceMonitor:
+    interval: 15s
+    path: /metrics
+
+# ── Autoscaling ─────────────────────────────────────────────────
+# TODO Module 09: Enable HPA
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+
+# ── PostgreSQL (sub-chart) ──────────────────────────────────────
+postgresql:
+  enabled: false
+
+# ── Redis (sub-chart) ──────────────────────────────────────────
+redis:
+  enabled: false

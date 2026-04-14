@@ -1,0 +1,49 @@
+# DeployForge — API Gateway Dockerfile
+# Multi-stage build: compile TypeScript → minimal production image
+# Introduced in Module 02 (Building containerized Node.js services)
+
+# ── Stage 1: Builder ────────────────────────────────────────────
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Install dependencies first (layer caching)
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+# Copy source and compile TypeScript
+COPY tsconfig.json ./
+COPY src/ ./src/
+RUN npm run build
+
+# ── Stage 2: Production ────────────────────────────────────────
+FROM node:20-alpine AS production
+
+LABEL maintainer="DeployForge Capstone"
+LABEL description="API Gateway — Express + TypeScript"
+
+WORKDIR /app
+
+# Non-root user for security (Module 07 deep-dive)
+RUN addgroup -S deployforge && adduser -S deployforge -G deployforge
+
+# Production dependencies only
+COPY package.json package-lock.json* ./
+RUN npm ci --omit=dev && npm cache clean --force
+
+# Compiled JavaScript from builder
+COPY --from=builder /app/dist/ ./dist/
+
+# Switch to non-root
+USER deployforge
+
+# Expose API port
+EXPOSE 3000
+
+# Health check — used by Docker and Kubernetes
+# TODO Module 04: Kubernetes probes supersede this but it remains useful for
+#                 docker compose and local development.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -qO- http://localhost:3000/health || exit 1
+
+CMD ["node", "dist/api/index.js"]

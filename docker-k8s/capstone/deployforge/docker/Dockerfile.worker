@@ -1,0 +1,39 @@
+# DeployForge — Worker Service Dockerfile
+# Multi-stage build: compile TypeScript → minimal production image
+# Introduced in Module 03 (Docker Compose multi-service stacks)
+
+# ── Stage 1: Builder ────────────────────────────────────────────
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+COPY tsconfig.json ./
+COPY src/ ./src/
+RUN npm run build
+
+# ── Stage 2: Production ────────────────────────────────────────
+FROM node:20-alpine AS production
+
+LABEL maintainer="DeployForge Capstone"
+LABEL description="Worker Service — BullMQ job processor"
+
+WORKDIR /app
+
+RUN addgroup -S deployforge && adduser -S deployforge -G deployforge
+
+COPY package.json package-lock.json* ./
+RUN npm ci --omit=dev && npm cache clean --force
+
+COPY --from=builder /app/dist/ ./dist/
+
+USER deployforge
+
+# Worker does not expose HTTP, but we still health-check via process status
+# TODO Module 08: Add /metrics HTTP endpoint on a separate port for Prometheus
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD node -e "process.exit(0)" || exit 1
+
+CMD ["node", "dist/services/worker.js"]
