@@ -9,37 +9,37 @@ Use this file to periodically self-assess. Review it monthly and update your rat
 ## Module 1 — Node.js Internals & Architecture
 
 ### 1.1 What Is Node.js?
-- [ ] Can describe Node.js as a JS runtime built on V8 + libuv
-- [ ] Understands the single-threaded, non-blocking I/O model
-- [ ] Can explain why Node.js is well-suited for I/O-heavy workloads and poor for CPU-heavy tasks
+- [x] Can describe Node.js as a JS runtime built on V8 + libuv
+- [x] Understands the single-threaded, non-blocking I/O model
+- [x] Can explain why Node.js is well-suited for I/O-heavy workloads and poor for CPU-heavy tasks
 
 ### 1.2 Node.js vs The Browser
-- [ ] Knows what Node.js has that browsers don't: `fs`, `net`, `crypto`, `child_process`, no DOM/BOM
-- [ ] Understands that `window` / `document` / `fetch` (pre-v18) don't exist in Node.js
-- [ ] Knows the `global` object vs `window`
+- [x] Knows what Node.js has that browsers don't: `fs`, `net`, `crypto`, `child_process`, no DOM/BOM
+- [x] Understands that `window` / `document` / `fetch` (pre-v18) don't exist in Node.js
+- [x] Knows the `global` object vs `window`
 
 ### 1.3 The Event Loop
-- [ ] Can name and order the event loop phases: timers → pending callbacks → idle/prepare → poll → check → close callbacks
-- [ ] Understands `process.nextTick()` runs before any I/O at the end of the current operation
-- [ ] Understands microtasks (Promises, `queueMicrotask`) are drained after each phase and after `nextTick`
-- [ ] Can predict the output order of `setTimeout`, `setImmediate`, `Promise.resolve`, `process.nextTick` in a code snippet
+- [x] Can name and order the event loop phases: timers → pending callbacks → idle/prepare → poll → check → close callbacks
+- [x] Understands `process.nextTick()` runs before any I/O at the end of the current operation
+- [x] Understands microtasks (Promises, `queueMicrotask`) are drained after each phase and after `nextTick`
+- [x] Can predict the output order of `setTimeout`, `setImmediate`, `Promise.resolve`, `process.nextTick` in a code snippet
 
 ### 1.4 Module Systems
-- [ ] Knows CommonJS: `require()`, `module.exports`, `exports` — synchronous, cached after first load
-- [ ] Knows ESM: `import` / `export`, static analysis, top-level `await`, `.mjs` or `"type": "module"`
-- [ ] Understands the interop challenges between CJS and ESM
-- [ ] Knows how `require.resolve()` works and why `__filename` / `__dirname` don't exist in ESM
+- [x] Knows CommonJS: `require()`, `module.exports`, `exports` — synchronous, cached after first load
+- [x] Knows ESM: `import` / `export`, static analysis, top-level `await`, `.mjs` or `"type": "module"`
+- [x] Understands the interop challenges between CJS and ESM
+- [x] Knows how `require.resolve()` works and why `__filename` / `__dirname` don't exist in ESM
 
 ### 1.5 npm Advanced
-- [ ] Understands `package.json` fields: `main`, `exports`, `types`, `engines`, `scripts`, `peerDependencies`
-- [ ] Knows the `node_modules` resolution algorithm: walk up directories
-- [ ] Can use `npm workspaces` for monorepos
-- [ ] Understands `package-lock.json` vs `npm-shrinkwrap.json`; knows why it must be committed
+- [x] Understands `package.json` fields: `main`, `exports`, `types`, `engines`, `scripts`, `peerDependencies`
+- [x] Knows the `node_modules` resolution algorithm: walk up directories
+- [x] Can use `npm workspaces` for monorepos
+- [x] Understands `package-lock.json` vs `npm-shrinkwrap.json`; knows why it must be committed
 
 ### 1.6 Built-in Modules
-- [ ] Comfortable with `path`, `os`, `url`, `util`, `events`, `crypto`, `zlib`
-- [ ] Can use `util.promisify` to wrap callback-based APIs
-- [ ] Knows `util.inspect` for deep object printing and `util.types` for type-checking
+- [x] Comfortable with `path`, `os`, `url`, `util`, `events`, `crypto`, `zlib`
+- [x] Can use `util.promisify` to wrap callback-based APIs
+- [x] Knows `util.inspect` for deep object printing and `util.types` for type-checking
 
 ---
 

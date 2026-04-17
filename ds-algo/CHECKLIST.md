@@ -9,35 +9,35 @@ Use this file to periodically self-assess. Review it after each module and updat
 ## Module 1 — Foundations & Complexity
 
 ### 1.1 What Are Data Structures?
-- [ ] Can explain the difference between a data structure and an algorithm
-- [ ] Can classify DS as linear (Array, LL, Stack, Queue) vs non-linear (Tree, Graph, Hash Table)
-- [ ] Knows when to choose each major data structure and why
+- [x] Can explain the difference between a data structure and an algorithm
+- [x] Can classify DS as linear (Array, LL, Stack, Queue) vs non-linear (Tree, Graph, Hash Table)
+- [x] Knows when to choose each major data structure and why
 
 ### 1.2 Why Data Structures Matter
-- [ ] Can articulate how the choice of DS affects time and space complexity
-- [ ] Can map common problem types to the appropriate starting DS
+- [x] Can articulate how the choice of DS affects time and space complexity
+- [x] Can map common problem types to the appropriate starting DS
 
 ### 1.3 Time vs Space Complexity
-- [ ] Understands the time-space trade-off (caching trades space for time, in-place sorts trade time for space)
-- [ ] Can identify the dominant term in a multi-operation algorithm
+- [x] Understands the time-space trade-off (caching trades space for time, in-place sorts trade time for space)
+- [x] Can identify the dominant term in a multi-operation algorithm
 
 ### 1.4 How to Calculate Complexity
-- [ ] Can analyze single loops, nested loops, and recursive calls for Big-O
-- [ ] Knows how to handle logarithmic steps (e.g., halving the input)
-- [ ] Can determine best, average, and worst case complexity separately
+- [x] Can analyze single loops, nested loops, and recursive calls for Big-O
+- [x] Knows how to handle logarithmic steps (e.g., halving the input)
+- [x] Can determine best, average, and worst case complexity separately
 
 ### 1.5 Big-O Notation
-- [ ] Can define O(f(n)) formally (upper bound definition)
-- [ ] Knows the rules: drop constants, drop lower-order terms
-- [ ] Can rank these in order: O(1), O(log n), O(n), O(n log n), O(n²), O(2ⁿ), O(n!)
+- [x] Can define O(f(n)) formally (upper bound definition)
+- [x] Knows the rules: drop constants, drop lower-order terms
+- [x] Can rank these in order: O(1), O(log n), O(n), O(n log n), O(n²), O(2ⁿ), O(n!)
 
 ### 1.6 Big-Θ and Big-Ω Notation
-- [ ] Can explain the difference between O (upper), Θ (tight), and Ω (lower) bounds
-- [ ] Can give an example where O and Ω differ (e.g., binary search)
+- [x] Can explain the difference between O (upper), Θ (tight), and Ω (lower) bounds
+- [x] Can give an example where O and Ω differ (e.g., binary search)
 
 ### 1.7 Common Runtimes
-- [ ] Knows the runtime of standard operations: HashMap get/put, binary search, sorting, BFS/DFS
-- [ ] Can identify which runtime class a given algorithm belongs to by inspection
+- [x] Knows the runtime of standard operations: HashMap get/put, binary search, sorting, BFS/DFS
+- [x] Can identify which runtime class a given algorithm belongs to by inspection
 
 ---
 

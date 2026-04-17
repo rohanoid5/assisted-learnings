@@ -9,76 +9,76 @@ Use this file to periodically self-assess. Review it monthly and update your rat
 ## Module 1 — Introduction
 
 ### 1.1 Terminology
-- [ ] Can explain the difference between Spring Framework and Spring Boot
-- [ ] Can name at least 4 core Spring Framework modules (Web, Data, Security, AOP, etc.)
-- [ ] Understands what "opinionated defaults" and "convention over configuration" mean
+- [x] Can explain the difference between Spring Framework and Spring Boot
+- [x] Can name at least 4 core Spring Framework modules (Web, Data, Security, AOP, etc.)
+- [x] Understands what "opinionated defaults" and "convention over configuration" mean
 
 ### 1.2 Architecture
-- [ ] Can describe the layered architecture: Controller → Service → Repository
-- [ ] Knows the role of the DispatcherServlet in the request lifecycle
-- [ ] Can explain how Spring Boot wraps and extends the Spring Framework
+- [x] Can describe the layered architecture: Controller → Service → Repository
+- [x] Knows the role of the DispatcherServlet in the request lifecycle
+- [x] Can explain how Spring Boot wraps and extends the Spring Framework
 
 ### 1.3 Why Spring?
-- [ ] Can articulate the core problems Spring solves (boilerplate, tight coupling, testability)
-- [ ] Can compare Spring Boot to a bare-metal Java EE / Jakarta EE approach
+- [x] Can articulate the core problems Spring solves (boilerplate, tight coupling, testability)
+- [x] Can compare Spring Boot to a bare-metal Java EE / Jakarta EE approach
 
 ### 1.4 Configuration
-- [ ] Understands `application.properties` vs `application.yml` trade-offs
-- [ ] Knows how to activate and use profiles (`@Profile`, `spring.profiles.active`)
-- [ ] Can bind external config to a typed class with `@ConfigurationProperties`
-- [ ] Understands the property resolution order (env vars > command-line > YAML > defaults)
+- [x] Understands `application.properties` vs `application.yml` trade-offs
+- [x] Knows how to activate and use profiles (`@Profile`, `spring.profiles.active`)
+- [x] Can bind external config to a typed class with `@ConfigurationProperties`
+- [x] Understands the property resolution order (env vars > command-line > YAML > defaults)
 
 ### 1.5 Dependency Injection
-- [ ] Can explain constructor injection vs field injection vs setter injection
-- [ ] Knows why constructor injection is preferred (immutability, testability)
-- [ ] Can resolve bean ambiguity with `@Primary` and `@Qualifier`
+- [x] Can explain constructor injection vs field injection vs setter injection
+- [x] Knows why constructor injection is preferred (immutability, testability)
+- [x] Can resolve bean ambiguity with `@Primary` and `@Qualifier`
 
 ### 1.6 Spring IoC Container
-- [ ] Can explain what an IoC container is and how it manages bean lifecycle
-- [ ] Understands the difference between `BeanFactory` and `ApplicationContext`
-- [ ] Knows the lifecycle hooks: `@PostConstruct`, `@PreDestroy`, `InitializingBean`
+- [x] Can explain what an IoC container is and how it manages bean lifecycle
+- [x] Understands the difference between `BeanFactory` and `ApplicationContext`
+- [x] Knows the lifecycle hooks: `@PostConstruct`, `@PreDestroy`, `InitializingBean`
 
 ### 1.7 Spring AOP
-- [ ] Can explain Aspect-Oriented Programming and name 3 practical use cases (logging, security, transactions)
-- [ ] Understands Join Point, Pointcut, Advice, Aspect, and Weaving
-- [ ] Can write a simple `@Aspect` class with `@Before` or `@Around` advice
-- [ ] Knows the proxy limitation: AOP only intercepts external calls (self-invocation doesn't work)
+- [x] Can explain Aspect-Oriented Programming and name 3 practical use cases (logging, security, transactions)
+- [x] Understands Join Point, Pointcut, Advice, Aspect, and Weaving
+- [x] Can write a simple `@Aspect` class with `@Before` or `@Around` advice
+- [x] Knows the proxy limitation: AOP only intercepts external calls (self-invocation doesn't work)
 
 ### 1.8 Annotations
-- [ ] Knows the distinction between `@Component`, `@Service`, `@Repository`, `@Controller`, `@RestController`
-- [ ] Understands `@Autowired`, `@Value`, `@Bean`, `@Configuration`
-- [ ] Can explain why `@Repository` adds persistence exception translation
+- [x] Knows the distinction between `@Component`, `@Service`, `@Repository`, `@Controller`, `@RestController`
+- [x] Understands `@Autowired`, `@Value`, `@Bean`, `@Configuration`
+- [x] Can explain why `@Repository` adds persistence exception translation
 
 ### 1.9 Spring Bean Scope
-- [ ] Can list and explain all 5 bean scopes: singleton, prototype, request, session, application
-- [ ] Knows that singleton is the default
-- [ ] Understands the issue of injecting a prototype bean into a singleton (use `ObjectProvider` or `@Lookup`)
+- [x] Can list and explain all 5 bean scopes: singleton, prototype, request, session, application
+- [x] Knows that singleton is the default
+- [x] Understands the issue of injecting a prototype bean into a singleton (use `ObjectProvider` or `@Lookup`)
 
 ---
 
 ## Module 2 — Spring Boot Core
 
 ### 2.1 Spring Boot Starters
-- [ ] Understands what a starter is and how it bundles dependencies + autoconfiguration
-- [ ] Knows the most common starters: `web`, `data-jpa`, `security`, `test`, `actuator`
-- [ ] Can create and publish a custom starter
+- [x] Understands what a starter is and how it bundles dependencies + autoconfiguration
+- [x] Knows the most common starters: `web`, `data-jpa`, `security`, `test`, `actuator`
+- [x] Can create and publish a custom starter
 
 ### 2.2 Autoconfiguration
-- [ ] Can explain how autoconfiguration works (condition classes, `AutoConfiguration.imports`)
-- [ ] Understands `@ConditionalOnClass`, `@ConditionalOnMissingBean`, `@ConditionalOnProperty`
-- [ ] Knows how to disable or override specific autoconfiguration
-- [ ] Can use `--debug` flag to see autoconfiguration report
+- [x] Can explain how autoconfiguration works (condition classes, `AutoConfiguration.imports`)
+- [x] Understands `@ConditionalOnClass`, `@ConditionalOnMissingBean`, `@ConditionalOnProperty`
+- [x] Knows how to disable or override specific autoconfiguration
+- [x] Can use `--debug` flag to see autoconfiguration report
 
 ### 2.3 Embedded Server
-- [ ] Understands how Spring Boot embeds Tomcat/Jetty/Undertow
-- [ ] Can configure server port, context path, connection timeout, and SSL
-- [ ] Can explain the trade-off vs deploying a WAR to an external container
+- [x] Understands how Spring Boot embeds Tomcat/Jetty/Undertow
+- [x] Can configure server port, context path, connection timeout, and SSL
+- [x] Can explain the trade-off vs deploying a WAR to an external container
 
 ### 2.4 Spring Boot Actuator
-- [ ] Knows the built-in endpoints: `/health`, `/info`, `/metrics`, `/env`, `/beans`
-- [ ] Can enable, disable, and secure individual actuator endpoints
-- [ ] Can create a custom `HealthIndicator`
-- [ ] Understands how to integrate metrics with Prometheus via `micrometer-registry-prometheus`
+- [x] Knows the built-in endpoints: `/health`, `/info`, `/metrics`, `/env`, `/beans`
+- [x] Can enable, disable, and secure individual actuator endpoints
+- [x] Can create a custom `HealthIndicator`
+- [x] Understands how to integrate metrics with Prometheus via `micrometer-registry-prometheus`
 
 ---
 

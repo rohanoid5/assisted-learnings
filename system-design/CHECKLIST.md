@@ -9,40 +9,40 @@ Use this file to periodically self-assess. Review it monthly and update your rat
 ## Module 1 — Foundations of System Design
 
 ### 1.1 What Is System Design?
-- [ ] Can describe the goal of system design: translate requirements into architecture
-- [ ] Knows the two phases: high-level design (components) and low-level design (internals)
-- [ ] Understands why there is no single "correct" answer — trade-offs are the answer
+- [x] Can describe the goal of system design: translate requirements into architecture
+- [x] Knows the two phases: high-level design (components) and low-level design (internals)
+- [x] Understands why there is no single "correct" answer — trade-offs are the answer
 
 ### 1.2 How to Approach System Design
-- [ ] Can follow the RESHADED or similar structured framework in an interview/discussion
-- [ ] Clarifies functional and non-functional requirements before starting
-- [ ] Estimates scale (users, QPS, data size) before choosing components
-- [ ] Knows to start with a simple design and iterate toward complexity
+- [x] Can follow the RESHADED or similar structured framework in an interview/discussion
+- [x] Clarifies functional and non-functional requirements before starting
+- [x] Estimates scale (users, QPS, data size) before choosing components
+- [x] Knows to start with a simple design and iterate toward complexity
 
 ### 1.3 Performance vs Scalability
-- [ ] Understands: performance = fast for a single user; scalability = stays fast as users grow
-- [ ] Can give an example of a system that is performant but not scalable
-- [ ] Knows vertical vs horizontal scaling trade-offs
+- [x] Understands: performance = fast for a single user; scalability = stays fast as users grow
+- [x] Can give an example of a system that is performant but not scalable
+- [x] Knows vertical vs horizontal scaling trade-offs
 
 ### 1.4 Latency vs Throughput
-- [ ] Can define latency (time per request) and throughput (requests per unit time)
-- [ ] Understands the latency numbers every engineer should know (L1/L2 cache, RAM, disk, network)
-- [ ] Knows that optimizing for max throughput can increase tail latency and vice versa
+- [x] Can define latency (time per request) and throughput (requests per unit time)
+- [x] Understands the latency numbers every engineer should know (L1/L2 cache, RAM, disk, network)
+- [x] Knows that optimizing for max throughput can increase tail latency and vice versa
 
 ### 1.5 Availability vs Consistency
-- [ ] Understands base availability math: 99.9% SLA = ~8.7 hours downtime/year; 99.99% = ~52 minutes
-- [ ] Knows that combining SLAs multiplies availability: two 99.9% services in series = 99.8%
-- [ ] Can explain the consistency–availability tension and give a real trade-off example
+- [x] Understands base availability math: 99.9% SLA = ~8.7 hours downtime/year; 99.99% = ~52 minutes
+- [x] Knows that combining SLAs multiplies availability: two 99.9% services in series = 99.8%
+- [x] Can explain the consistency–availability tension and give a real trade-off example
 
 ### 1.6 CAP Theorem
-- [ ] Can state the CAP theorem correctly: in a partition, choose consistency OR availability
-- [ ] Knows CP vs AP systems with real examples (ZooKeeper = CP; DynamoDB = AP by default)
-- [ ] Understands that network partitions are rare but must be assumed in distributed systems
+- [x] Can state the CAP theorem correctly: in a partition, choose consistency OR availability
+- [x] Knows CP vs AP systems with real examples (ZooKeeper = CP; DynamoDB = AP by default)
+- [x] Understands that network partitions are rare but must be assumed in distributed systems
 
 ### 1.7 Consistency Patterns
-- [ ] Knows strong consistency, weak consistency, and eventual consistency with examples
-- [ ] Understands causal consistency and read-your-writes consistency
-- [ ] Can choose the right consistency level for a given feature (e.g., banking vs social feed)
+- [x] Knows strong consistency, weak consistency, and eventual consistency with examples
+- [x] Understands causal consistency and read-your-writes consistency
+- [x] Can choose the right consistency level for a given feature (e.g., banking vs social feed)
 
 ---
 

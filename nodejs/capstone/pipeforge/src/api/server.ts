@@ -4,6 +4,10 @@
 
 import express from 'express';
 import { createServer } from 'node:http';
+import os from 'node:os';
+import { randomUUID } from 'node:crypto';
+
+const instanceId = randomUUID();
 
 const app = express();
 app.use(express.json());
@@ -14,7 +18,25 @@ app.use(express.json());
 // TODO (Module 06): Attach WebSocket server for job progress
 
 app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  const totalMem = os.totalmem();
+  const freeMem = os.freemem();
+
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    instance: instanceId,
+    node: process.version,
+    platform: os.platform(),
+    memory: {
+      totalMB: Math.round(totalMem / 1024 / 1024),
+      freeMB: Math.round(freeMem / 1024 / 1024),
+      usedPercent: Math.round(((totalMem - freeMem) / totalMem) * 100),
+    },
+    uptime: {
+      processSeconds: Math.floor(process.uptime()),
+      systemSeconds: Math.floor(os.uptime()),
+    },
+  });
 });
 
 const PORT = process.env.PORT ?? 3000;
